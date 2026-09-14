@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YT Downloader - FAQ</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+
+<body>
+    <div class="min-h-screen bg-[#eaeaea]">
+        <div class="bg-[#191919] px-3 py-6">
+            <nav class="w-full flex items-center justify-center gap-[2rem] px-[10px]">
+                <a class="text-[#fafafa] hover:text-[#fa0000]" href="/">Home</a>
+                <a class="text-[#fafafa] hover:text-[#fa0000]" href="/about">About</a>
+                <a class="text-[#fafafa] hover:text-[#fa0000]" href="/faq">FAQ</a>
+                <a class="text-[#fafafa] hover:text-[#fa0000]" href="/donate">Donate</a>
+            </nav>
+
+            <a href="/" class="block text-white text-center text-5xl mt-[3rem] mb-[2rem]">YT Downloader</a>
+
+            <div class="block mt-[50px] mx-auto max-w-[500px]">
+                <div class="relative mt-4 mb-6">
+                    <form action="/search" >
+                        <input id="q" name="q" placeholder="Search Youtube" type="text" class="flex bg-[#fafafa] h-12 w-full rounded-sm border-0 outline-0 bg-background pl-3 pr-15 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground md:text-sm"/>
+                        
+                        <button type="submit" class="bg-[#fa0000] text-[#fafafa] rounded-tr-sm rounded-br-sm absolute right-0 top-0 h-full aspect-square px-2 flex items-center justify-center cursor-pointer" id="search_btn">
+                            <i data-lucide="search"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>        
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>lucide.createIcons()</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+.search_result_btn .search_result_btn_open { display: block }
+.search_result_btn.open .search_result_btn_open { display: none }
+
+.search_result_btn .search_result_btn_close { display: none }
+.search_result_btn.open .search_result_btn_close { display: block }
+
+.loading-indicator > div { animation: spin 2s linear infinite }
+
+@keyframes spin {
+    from { transform: rotate(0deg) }
+    to { transform: rotate(360deg) }
+}
