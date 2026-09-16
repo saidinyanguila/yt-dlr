@@ -1,0 +1,111 @@
+{% extends '_base.html' %}
+
+{% block title %}Music Player - {{ artist.name }}{% endblock %}
+
+{% block heading %}{% endblock %}
+
+{% block body %}
+<div class="relative md:pb-20 pb-70">
+    <div class="relative mb-2 w-full h-[350px] overflow-hidden">
+        <img class="absolute w-full h-full object-cover" src="{{ artist.picture_xl }}" alt="{{ artist.name }}">
+        
+        <div class="absolute w-full left-0 bottom-0 flex items-center gap-3 px-5 py-4">
+            <button class="bg-red-400 p-2 rounded-full cursor-pointer"><i class="w-[18px] h-[18px] shrink-0 fill-white" data-lucide="play"></i></button>
+            <p class="inline-block text-shadow-lg text-white/90 text-[32px] font-bold mr-2">{{ artist.name }}</p>
+        </div>
+    </div>
+
+    <div class="flex items-center gap-3 md:px-4 px-2 mt-4 mb-2">
+        {% if is_following %}
+        <button data-id="{{ artist.id }}" id="btn_00" class="bg-gray-400 text-[16px] px-4 py-[5px] font-bold rounded-full cursor-pointer">Following</button>
+        {% else %}
+        <button data-id="{{ artist.id }}" id="btn_00" class="bg-red-400 text-[16px] px-4 py-[5px] font-bold rounded-full cursor-pointer">Follow</button>
+        {% endif %}
+    </div>
+    
+    <!-- Songs -->
+    <div class="md:px-4 px-2 mb-10">
+        <div class="flex gap-2 items-center py-2 mb-2">
+            <p class="text-[24px] text-white/90 font-bold">Top Songs</p>
+            <button class="mt-[2px]"><i class="w-[20px] h-[20px] stroke-[4px]" data-lucide="chevron-right"></i></button>
+        </div>
+
+        <div class="overflow-x-auto no-scrollbar">
+            <div class="md:grid flex flex-cols-{{ tracklist|length }} grid-cols-3 gap-x-4 gap-y-[5px]">
+                {% for tracklist in top_tracks %}
+                {% if tracklist|length > 0 %}
+                <div class="md:w-auto min-w-[90%]">
+                    {% for track in tracklist %}
+                        <div data-id="{{ track.id }}" class="song_item relative flex items-center justify-between px-1 pt-1 pb-[8px] mb-2 border-b-1 border-white/30 cursor-pointer">
+                            <div class="flex gap-3 w-[85%]">
+                                <div class="w-10 h-10 shrink-0 aspect-square rounded-md overflow-hidden"><img class="w-full h-full" src="{{ track.album.cover_big }}" alt="{{ track.title }}"></div>
+                                
+                                <div class="w-full truncate">
+                                    <p class="truncate text-[15px]">{{ track.title }}</p>
+                                    <p class="truncate text-[13px] text-white/80 font-[500] -mt-1">{{ track.album.title }}</p>
+                                </div>
+                            </div>
+
+                            <button class="option_btn w-[25px] h-[25px] p-[4px] rounded-full cursor-pointer hover:bg-white/20"><i class="w-full h-full" data-lucide="ellipsis"></i></button>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Albums -->
+    <div class="md:px-4 px-2 mb-10">
+        <div class="px-1 py-2 mb-2">
+            <p class="text-[22px] text-white/90 font-bold">Albums</p>
+        </div>
+
+        <div class="relative w-full overflow-x-auto no-scrollbar">
+            <div class="flex px-2 gap-4">
+                {% for album in albums['data'] %}
+                <a href="/album/{{ album.id }}">
+                    <div class="relative w-[175px] cursor-pointer"> 
+                        <div class="w-full mb-2 aspect-square rounded-lg overflow-hidden"><img src="{{ album.cover_xl }}" alt="{{ album.title }}"></div>
+                        <div>
+                            <p class="text-[15px] font-bold">{{ album.title }}</p>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Has Songs With -->
+    {% if collabs|length > 0 %}
+    <div class="md:px-4 px-2">
+        <div class="px-1 py-2 mb-2">
+            <p class="text-[22px] text-white/90 font-bold">Has Songs With</p>
+        </div>
+
+        <div class="relative w-full overflow-x-auto no-scrollbar">
+            <div class="flex px-2 gap-4">
+                {% for collab in collabs %}
+                <a href="/artist/{{ collab.id }}">
+                    <div class="relative w-[175px] cursor-pointer">    
+                        <div class="w-full aspect-square rounded-full mb-2 overflow-hidden"><img src="{{ collab.picture_big }}" alt="{{ collab.name }}"></div>
+                        <div class="text-center">
+                            <p class="text-[15px] font-bold">{{ collab.name }}</p>
+                        </div>
+                    </div>
+                </a>  
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block navHighlight %}
+<script src="/static/js/Artist.js"></script>
+{% endblock %}
+

@@ -1,0 +1,93 @@
+{% extends '_base.html' %}
+
+{% block title %}Music Player - {{ album.title }}{% endblock %}
+
+{% block body %}
+<div class="relative min-h-screen md:px-14 px-3 py-8 md:pb-15 pb-45">
+    <div class="flex md:flex-row flex-col md:items-end items-center md:text-left text-center md:gap-8 gap-2 md:px-0 px-8 mb-6">
+        <div class="md:w-[300px] md:h-[300px] w-full h-full rounded-md overflow-hidden"><img src="{{ album.cover_xl }}" alt="{{ album.title }}"></div>
+        
+        <div class="md:mb-0 mb-4 py-1">
+            <p class="text-[28px] font-bold text-white/90 -mb-2">{{ album.title }}</p>
+            <a href="/artist/{{ album.artist.id }}" class="block text-[24px] font-[400] text-white/90 md:mb-1 mb-[6px] hover:underline">{{ album.artist.name }}</a>
+            <p id="genres_date" class="text-[14px] font-bold">{{ album.genres.data[0].name }} &#8226; {{ album.release_date }}</p>
+
+            <div class="flex md:justify-start justify-center gap-3 mt-5 md:mb-3 mb-4">
+                <button data-id="{{ album.id }}" id="btn_00" class="bg-white text-black p-2 rounded-full cursor-pointer">
+                    {% if is_liked %}
+                    <i id="icn_00" class="fill-black" data-lucide="heart"></i>
+                    {% else %}
+                    <i id="icn_00" data-lucide="heart"></i>
+                    {% endif %}
+                </button>
+
+                <button class="bg-white flex items-center gap-2 text-black md:px-5 md:py-1 px-8 py-2 rounded-full cursor-pointer">
+                    <i class="md:size-[18px] fill-black" data-lucide="play"></i>
+                    <p class="text-[15px] font-bold">Play</p>
+                </button>
+
+                <button class="bg-white p-2 rounded-full cursor-pointer">
+                    <i class="stroke-black" data-lucide="ellipsis"></i>
+                </button>
+            </div>
+
+            <p class="text-white/50 text-[15px] font-bold">{{ album.label }}</p>
+        </div>
+    </div>
+
+    <div class="mb-8">
+        <p class="text-[20px] text-white/90 font-bold mb-2">Tracks ({{ album.nb_tracks }})</p>
+        {% for track in album['tracks']['data'] %}
+            <div data-id="{{ track.id }}" class="song_item relative flex items-center justify-between px-2 py-3" >
+                <div class="absolute left-0 bottom-0 bg-white/30 w-full h-[1px]"></div>
+                <div class="flex md:min-w-[150px] gap-3">
+                    <p class="text-white/65 text-[15px] font-[400]">{{ loop.index }}</p>
+                    <p class="text-[15px] font-[400] cursor-pointer hover:underline">{{ track.title }}</p>
+                </div>
+                
+                <div class="flex gap-3 text-white/90">
+                    <button class="option_btn w-[25px] h-[25px] p-[4px] rounded-full cursor-pointer hover:bg-white/20"><i class="w-full h-full" data-lucide="ellipsis"></i></button>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="">
+        <div class="px-1 py-2 mb-2">
+            <p class="text-[19px] text-white/90 font-bold">Other Albums By {{ album.artist.name }}</p>
+        </div>
+
+        <div class="relative w-full overflow-x-auto no-scrollbar">
+            <div class="flex px-2 gap-4">
+                {% if more_albums|length > 2 %}
+                    {% for other_album in more_albums %}
+                        {% if other_album.id != album.id %}
+                        <a href="/album/{{ other_album.id }}">
+                            <div class="relative w-[175px] cursor-pointer"> 
+                                <div class="w-full mb-2 aspect-square rounded-lg overflow-hidden"><img src="{{ other_album.cover_xl }}" alt="{{ other_album.title }}"></div>
+                                <div>
+                                    <p class="text-[15px] font-bold">{{ other_album.title }}</p>
+                                </div>
+                            </div>
+                        </a>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block navHighlight %}
+<script>
+const e = document.getElementById("genres_date");
+const str = e.innerText.split("-")[0];
+
+e.innerHTML = str;
+</script>
+<script src="/static/js/Album.js"></script>
+{% endblock %}
+
+

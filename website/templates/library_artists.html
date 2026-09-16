@@ -1,0 +1,48 @@
+{% extends '_base.html' %}
+
+{% block title %}Music Player - Artists{% endblock %}
+
+{% block navlinks %}
+<a href="/" class="flex items-center text-sm gap-3"><div><i data-lucide="home"></i></div><p>Home</p></a>
+<a href="/search" class="flex items-center text-sm gap-3"><div><i data-lucide="search"></i></div><p>Search</p></a>
+<a href="{{ url_for('library.library_home') }}" class="text-red-400 flex items-center text-sm gap-3"><div><i data-lucide="layout-grid"></i></div><p>Library</p></a>
+{% endblock %}
+
+{% block body %}
+<div class="flex items-center gap-3 px-4 pt-5 pb-3 md:mb-1">
+    <a class="md:hidden block" href="{{ url_for('library.library_home') }}"><i data-lucide="chevron-left"></i></a>
+    <p class="text-[28px] font-bold text-white/90">Artists</p>
+</div>
+
+<div class="min-h-screen px-4 {% if artist_groups|length > 0 %}mt-4{% endif %}">
+    <div class="md:pb-0 pb-30">
+        {% if artist_groups|length == 0 %}
+        <p class="text-[15px] md:my-0 my-2 md:text-left text-center text-white/60">Artists you follow will appear here.</p>
+        {% else %}
+        <div class="fixed bg-black/50 right-0 top-1/2 -translate-y-1/2 px-1 py-2 flex flex-col items-center gap-2 rounded-md">
+            {% for group in artist_groups %}
+            <a href="#{{ group.letter }}" class="text-[10px] text-white/70 hover:text-red-500">{{ group.letter }}</a>
+            {% endfor %}
+        </div>
+
+        {% for group in artist_groups %}
+        <div id="{{ group.letter }}" class="mb-5 border-b-1 border-white/40">
+            <p class="text-[16px] text-white/90 font-bold mb-4">{{ group.letter }}</p>
+
+            <div class="">
+                {% for artist in group['items'] %}
+                    <a href="/artist/{{ artist.deezer_id }}" class="flex items-center gap-3 mb-4  cursor-pointer">
+                        <div class="w-[50px] h-[50px] aspect-square rounded-full overflow-hidden"><img class="w-full h-full" src="{{ artist.picture_xl }}" alt="{{ artist.name }}"></div>
+                        <p class="text-white/90 text-[17px] font-[600] hover:underline">{{ artist.name }}</p>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+
+{% block navHighlight %}<script>highlightNavItem(2);</script>{% endblock %}

@@ -1,0 +1,76 @@
+{% extends '_base.html' %}
+
+{% block title %}Music Player - Liked Songs{% endblock %}
+
+{% block navlinks %}
+<a href="/" class="flex items-center text-sm gap-3"><div><i data-lucide="home"></i></div><p>Home</p></a>
+<a href="/search" class="flex items-center text-sm gap-3"><div><i data-lucide="search"></i></div><p>Search</p></a>
+<a href="/library" class="text-red-400 flex items-center text-sm gap-3"><div><i data-lucide="layout-grid"></i></div><p>Library</p></a>
+{% endblock %}
+
+{% block body %}
+<div class="px-4 py-7">
+    <div class="flex items-center gap-3 md:mb-1">
+        <a class="md:hidden block" href="{{ url_for('library.library_home') }}"><i data-lucide="chevron-left"></i></a>
+        <p class="text-[28px] font-bold text-white/90">Liked Songs</p>
+    </div>
+
+    <div class="flex justify-between items-center mt-5 md:pr-5">
+        <div class="flex items-center gap-4">
+            <button class="bg-red-400 p-2 rounded-full cursor-pointer">
+                <i class="w-[18px] h-[18px] shrink-0 fill-white" data-lucide="play"></i>
+            </button>
+            <p class="text-[15px] text-white/90 font-[600]">{{ user.liked_songs|length }} {% if user.liked_songs|length > 1 %}Songs{% else %}Song{% endif %}</p>
+        </div>
+        
+        <button class="md:hidden flex items-center gap-3 text-[15px] text-white/75 font-[600] cursor-pointer">Sort <i class="size-[18px]" data-lucide="arrow-down-wide-narrow"></i></button>
+    </div>
+</div>
+
+<div class="min-h-screen px-2 {% if user.liked_songs|length > 0 %}mt-4{% endif %}">
+    <div class="md:pb-0 pb-35">
+        {% if user.liked_songs|length == 0 %}
+        <p class="text-[15px] md:my-0 my-2 md:text-left text-center text-white/60">Your Liked Songs will appear here.</p>
+        {% else %}
+        <div class="md:flex hidden items-center px-2 py-1 mb-6">
+            <div class="text-[13px] text-white/60 min-w-[370px]">
+                {% if sort == "title" %}<a href="{{ url_for('library.library_liked') }}" class="flex items-center gap-3">Title<i class="size-[12px]" data-lucide="arrow-down-wide-narrow"></i></a>{% else %}<a href="?sort=title">Title</a>{% endif %}
+            </div>
+            <div class="text-[13px] text-white/60 min-w-[250px]">
+                {% if sort == "artist" %}<a href="{{ url_for('library.library_liked') }}" class="flex items-center gap-3">Artist<i class="size-[12px]" data-lucide="arrow-down-wide-narrow"></i></a>{% else %}<a href="?sort=artist">Artist</a>{% endif %}
+            </div>
+            <div class="text-[13px] text-white/60 min-w-[250px]">
+                {% if sort == "album" %}<a href="{{ url_for('library.library_liked') }}" class="flex items-center gap-3">Album<i class="size-[12px]" data-lucide="arrow-down-wide-narrow"></i></a>{% else %}<a href="?sort=album">Album</a>{% endif %}
+            </div>
+        </div>
+
+        {% for song in user.liked_songs %}
+        <div data-id="{{ song.deezer_id }}" class="song_item relative flex md:justify-start justify-between items-center md:px-2 px-1 py-1 md:mb-2 mb-1 hover:bg-white/20 rounded-lg overflow-hidden">
+            <div class="flex items-center gap-2 md:min-w-[370px]">
+                <div class="md:w-[45px] md:h-[45px] w-[50px] h-[50px] aspect-square shrink-0 rounded-md overflow-hidden"><img class="w-full h-full" src="{{ song.cover_xl }}" alt="{{ song.title }}"></div>
+                <div class="overflow-hidden whitespace-nowrap w-[75%] overflow-hidden">
+                    <p class="truncate text-[14px] font-[500]">{{ song.title }}</p>
+                    <a href="/artist/{{ song.artist_id }}" class="md:hidden block truncate font-[600] text-white/90 text-[12px] -mt-[4px]">{{ song.artist_name }}</a>
+                </div>
+            </div>
+
+            <div class="md:block hidden w-[250px] shrink-0 truncate">
+                <a href="/artist/{{ song.artist_id }}" class="font-[500] text-white/80 text-[14px] hover:underline">{{ song.artist_name }}</a>
+            </div>
+
+            <div class="md:inline-block hidden w-[250px] shrink-0 truncate">
+                <a href="/album/{{ song.album_id }}" class="font-[500] text-white/80 text-[14px] hover:underline">{{ song.album_name }}</a>
+            </div>
+            
+            <div class="md:absolute md:right-2 md:top-1/2 md:-translate-y-1/2 flex gap-3 text-white/90 z-9">
+                <button class="option_btn w-[25px] h-[25px] p-[4px] rounded-full cursor-pointer"><i class="w-full h-full" data-lucide="ellipsis"></i></button>
+            </div>    
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+
+{% block navHighlight %}<script>highlightNavItem(2);</script>{% endblock %}

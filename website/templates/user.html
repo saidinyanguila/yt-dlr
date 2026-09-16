@@ -1,0 +1,40 @@
+{% extends '_base.html' %}
+
+{% block title %}Music Player - You ({{ user.f_name }}){% endblock %}
+
+{% block navlinks %}
+<a href="/" class="flex items-center text-sm gap-3"><div><i data-lucide="home"></i></div><p>Home</p></a>
+<a href="/search" class="flex items-center text-sm gap-3"><div><i data-lucide="search"></i></div><p>Search</p></a>
+<a href="/library" class="flex items-center text-sm gap-3"><div><i data-lucide="layout-grid"></i></div><p>Library</p></a>
+{% endblock %}
+
+{% block user_btn %}
+<a href="{{ url_for('auth.account') }}" class="flex text-red-400 items-center gap-3">
+    <div><i data-lucide="user-circle"></i></div>
+    <p>{{ user.f_name }} {{ user.l_name }}</p>
+</a>
+{% endblock %}
+
+{% block body %}
+<div class="min-h-screen px-4">
+    <div class="md:px-4 px-2 md:pt-8 pt-12 pb-4">
+        <div class="flex md:items-center items-end gap-8">
+            <div class="md:w-[160px] md:h-[160px] w-[100px] h-[100px] rounded-full overflow-hidden">
+                <img class="w-full h-full" src="/{{ user.user_img_path }}" alt="">
+            </div>
+
+            <div class="flex flex-col py-3">
+                <p>{{ user.f_name }} {{ user.l_name }}</p>
+                <p class="mb-2">{{ user.email }}</p>
+
+                <div class="flex gap-6">
+                    <a class="block text-blue-500 text-[19px] font-bold hover:underline" href="{{ url_for('auth.account_edit') }}">Edit Proile</a>
+                    <a class="block text-red-500 text-[19px] font-bold hover:underline" href="{{ url_for('auth.logout') }}">Log Out</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block navHighlight %}<script>highlightNavItem(3);</script>{% endblock %}

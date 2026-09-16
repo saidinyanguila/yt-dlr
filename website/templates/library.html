@@ -1,0 +1,42 @@
+{% extends '_base.html' %}
+
+{% block title %}Music Player - Library{% endblock %}
+
+{% block navlinks %}
+<a href="/" class="flex items-center text-sm gap-3"><div><i data-lucide="home"></i></div><p>Home</p></a>
+<a href="/search" class="flex items-center text-sm gap-3"><div><i data-lucide="search"></i></div><p>Search</p></a>
+<a href="/library" class="text-red-400 flex items-center text-sm gap-3"><div><i data-lucide="layout-grid"></i></div><p>Library</p></a>
+{% endblock %}
+
+{% block body %}
+<div class="px-4 py-5 md:mb-3">
+    <p class="text-[28px] font-bold text-white/90">Library</p>
+</div>
+
+<div class="min-h-screen px-4">
+    <div class="grid md:grid-cols-3 grid-cols-1 md:gap-4 gap-1 md:mb-8 mb-6">
+        {% for section in sections %}
+        <a class="flex items-center justify-between relative px-2 py-3 rounded-sm hover:bg-white/10" href="{{ section.url }}">
+            <div class="flex items-center md:gap-3 gap-4">
+                <i data-lucide="{{ section.icon }}"></i>
+                <p>{{ section.name }}</p>
+            </div>
+            <button class="w-[25px] h-[25px] p-[4px] rounded-full cursor-pointer"><i class="w-full h-full" data-lucide="chevron-right"></i></button>
+            <div class="absolute left-0 bottom-0 w-full h-[1px] bg-white/20"></div>
+        </a>
+        {% endfor %}
+    </div>
+
+    <div class="">
+        <p class="text-[22px] font-[600] text-white/90 mb-5">Playlists</p>
+
+        {% if total_playlists == 0 %}
+        <p class="text-[14px] md:text-left text-center text-white/60">Your Playlists will appear here.</p>
+        {% else %}
+
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block navHighlight %}<script>highlightNavItem(2);</script>{% endblock %}

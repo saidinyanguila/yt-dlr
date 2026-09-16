@@ -1,45 +1,64 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YT Downloader - Free Youtube to MP3 Converter</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="static/css/style.css">
-</head>
+{% extends '_base.html' %}
 
-<body>
-    <div class="min-h-screen bg-[#eaeaea]">
-        <div class="bg-[#191919] px-3 py-6">
-            <nav class="w-full flex items-center justify-center gap-[2rem] px-[10px]">
-                <a class="text-[#fafafa] hover:text-[#fa0000]" href="/">Home</a>
-                <a class="text-[#fafafa] hover:text-[#fa0000]" href="/about">About</a>
-                <a class="text-[#fafafa] hover:text-[#fa0000]" href="/faq">FAQ</a>
-                <a class="text-[#fafafa] hover:text-[#fa0000]" href="/donate">Donate</a>
-            </nav>
+{% block title %}Music Player - Home{% endblock %}
 
-            <a href="/" class="block text-white text-center text-5xl mt-[3rem] mb-[2rem]">YT Downloader</a>
+{% block navlinks %}
+<a href="/" class="text-red-400 flex items-center text-sm gap-3"><div><i data-lucide="home"></i></div><p>Home</p></a>
+<a href="/search" class="flex items-center text-sm gap-3"><div><i data-lucide="search"></i></div><p>Search</p></a>
+<a href="/library" class="flex items-center text-sm gap-3"><div><i data-lucide="layout-grid"></i></div><p>Library</p></a>
+{% endblock %}
 
-            <div class="block mt-[50px] mx-auto max-w-[500px]">
-                <div class="relative mt-4 mb-6">
-                    <form action="/search" >
-                        <input required id="q" name="q" placeholder="Search Youtube" type="text" class="flex bg-[#fafafa] h-12 w-full rounded-sm border-0 outline-0 bg-background pl-3 pr-15 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground md:text-sm"/>
-                        
-                        <button type="submit" class="bg-[#fa0000] text-[#fafafa] rounded-tr-sm rounded-br-sm absolute right-0 top-0 h-full aspect-square px-2 flex items-center justify-center cursor-pointer" id="search_btn">
-                            <i data-lucide="search"></i>
-                        </button>
-                    </form>
+{% block body %}
+<div class="px-4 py-5 md:mb-3">
+    <p class="text-[28px] font-bold text-white/90">Home</p>
+</div>
+
+<div class="min-h-screen px-4">
+    <!-- Welcome Items -->
+    <div class="mb-6">
+        <p class="text-white/90 text-[18px] font-[600] mb-2">For You</p>
+        <div class="relative w-full overflow-x-auto no-scrollbar">
+            <div class="flex pb-3 gap-x-3">
+                {% for item in welcomeItems %}
+                <div class="relative min-w-[225px] h-[285px] rounded-lg overflow-hidden cursor-pointer">
+                    <div class="absolute inset-0 bg-[{{item.bg}}]"></div>
+                    
+                    <div class="absolute z-99 bottom-2 left-2 font-bold">
+                        <p class="text-[11px]">{{item.label}}</p>
+                        <p class="text-[17px]">{{item.name}}</p>
+                        <p class="text-[13px]">{{item.info}}</p>
+                    </div>
                 </div>
+                {% endfor %}   
             </div>
-        </div>  
-        
-        <div class="container max-w-175 mx-auto px-2 py-5">
-            <p class="text-xl font-light text-center mb-6">Recently Downloaded:</p>
-
         </div>
     </div>
 
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script>lucide.createIcons()</script>
-</body>
-</html>
+    <!-- Recents -->
+    <div class="mb-6">
+        <p class="text-white/90 text-[18px] font-[600] mb-2">Recently Played</p>
+        <div class="relative w-full overflow-x-auto no-scrollbar">
+            <div class="flex gap-2">
+                {% for item in recents %}
+                <a class="block p-0 mx-0" href="/album/{{ item.album_id }}">
+                    <div class="relative min-w-[175px] max-w-[175px] cursor-pointer"> 
+                        <div class="w-full mb-2 aspect-square rounded-lg overflow-hidden"><img src="{{ item.cover_xl }}" alt="{{ item.album_name }}"></div>
+                        <div class="w-full overflow-hidden">
+                            <p class="truncate text-[15px] font-bold">{{ item.title }}</p>
+                            <a href="/artist/{{ item.artist_id }}" class="truncate block -mt-[2px] text-[12px] text-white/55 hover:text-white">{{ item.artist_name }}</a>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}   
+            </div>
+        </div>
+    </div>
+
+    <!-- More Like [Artist] -->
+
+    <!-- From Your Librart (Albums & Playlists) -->
+</div>
+{% endblock %}
+
+{% block navHighlight %}<script>highlightNavItem(0);</script>{% endblock %}
+

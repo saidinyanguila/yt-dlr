@@ -1,81 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YT Downloader - {{ query }}</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="static/css/style.css">
-</head>
+{% extends '_base.html' %}
 
-<body>
-    <div class="min-h-screen bg-[#eaeaea]">
-        <div class="bg-[#191919] px-3 py-6">
-            <nav class="w-full flex items-center justify-center gap-[2rem] px-[10px]">
-                <a class="text-[#fafafa] hover:text-[#fa0000]" href="/">Home</a>
-                <a class="text-[#fafafa] hover:text-[#fa0000]" href="/about">About</a>
-                <a class="text-[#fafafa] hover:text-[#fa0000]" href="/faq">FAQ</a>
-                <a class="text-[#fafafa] hover:text-[#fa0000]" href="/donate">Donate</a>
-            </nav>
-            <a href="/" class="block text-white text-center text-5xl mt-[3rem] mb-[2rem]">YT Downloader</a>
-            <div class="block mt-[50px] mx-auto max-w-[500px]">
-                <div class="relative mt-4 mb-6">
-                    <form action="/search" >
-                        <input value="{{ query }}" required id="q" name="q" placeholder="Search Youtube" type="text" class="flex bg-[#fafafa] h-12 w-full rounded-sm border-0 outline-0 bg-background pl-3 pr-15 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground md:text-sm"/>
-                        <button type="submit" class="bg-[#fa0000] text-[#fafafa] rounded-tr-sm rounded-br-sm absolute right-0 top-0 h-full aspect-square px-2 flex items-center justify-center cursor-pointer" id="search_btn">
-                            <i data-lucide="search"></i>
-                        </button>
-                    </form>
-                </div>
-            </div>
+{% block title %}Music Player - Search{% endblock %}
+
+{% block navlinks %}
+<a href="/" class="flex items-center text-sm gap-3"><div><i data-lucide="home"></i></div><p>Home</p></a>
+<a href="/search" class="text-red-400 flex items-center text-sm gap-3"><div><i data-lucide="search"></i></div><p>Search</p></a>
+<a href="/library" class="flex items-center text-sm gap-3"><div><i data-lucide="layout-grid"></i></div><p>Library</p></a>
+{% endblock %}
+
+{% block body %}
+<div class="md:hidden block px-4 py-3 md:py-5 md:mb-3">
+    <p class="text-[28px] font-bold text-white/90">Search</p>
+</div>
+
+<div class="min-h-screen py-1 px-4">
+    <div class="flex flex-col items-center md:px-6 py-2">
+        <div class="relative md:w-[60%] w-full">
+            <i class="absolute w-[22px] top-1/2 left-4 -translate-y-1/2" data-lucide="search"></i>
+            <input id="search_input" type="text" class="pl-12 pr-5 py-2 w-full border-1 border-white/20 focus:outline-2 focus:outline-red-400 rounded-full" placeholder="Search Music">
         </div>
-        
-        <div class="container max-w-175 mx-auto px-2 py-5">
-            <p class="text-xl font-light text-center mb-6">Search Results:</p>
-            <div class="flex flex-col gap-4 mb-5" id="search_results">
-                {% for video in videos %}
-                <div data-yt-id="{{ video.video_id }}" data-title-clean="{{ video.title_clean }}" class="search_result flex items-center gap-8 bg-white rounded-md shadow-ms w-full py-4 px-2 cursor-pointer">
-                    <div class="bg-white rounded-md shadow-ms w-full py-4 px-2 cursor-pointer">
-                        <div class="flex items-center justify-between pr-1 ">
-                            <div class="flex items-center gap-8">
-                                <div class="relative">
-                                    <img src="{{ video.thumbnail[0].url }}" class="min-w-[100px] max-w-[100px]" alt="">
-                                    <p class="absolute right-0 bottom-0 bg-[#fa0000] px-2 py-1 rounded-sm text-white text-[10px]">{{ video.duration }}</p>
-                                </div>
-                                
-                                <div class="flex flex-col justify-center">
-                                    <p class="text-[19px] font-light">{{ video.title }}</p>
-                                    <p class="text-[15px] font-bold">{{ video.author }}</p>
-                                </div>
-                            </div>
-                            
-                            <div class="search_result_btn">
-                                <button class="search_result_btn_open bg-[#fa0000] p-2 rounded-sm text-white cursor-pointer"><i data-lucide="download"></i></button> 
-                                <button class="search_result_btn_close bg-[#fa0000] p-2 rounded-sm text-white cursor-pointer"><i data-lucide="x"></i></button> 
-                            </div> 
-                        </div>
-                            
-                        <div class="search_result_options w-full block hidden search_result_info mt-3 pt-5 border-t border-[#cccccc]">
-                            <input value="{{ video.title_clean }}" class="search_result_input bg-[#fafafacc] w-full h-[45px] py-2 px-2 border border-black rounded-sm" type="text" id="search-bar" autoComplete={"off"} placeholder="Search for song info" />
-                            
-                            <div class="mt-2">
-                                <div class="tracks_results"></div>
 
-                                <div class="download_blank relative flex items-center py-1 px-3">
-                                    <div class="relative w-[60px] h-[60px] mr-3 aspect-square" ><img class="w-full h-full" src="/static/img/download.png" alt="" /></div>
-                                    <p class="text-lg font-[400]">Download without info</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
+        <div class="mx-auto md:w-[60%] w-full flex items-start gap-3 mt-4 mb-3">
+            <button class="cat_btn border-[2px] border-red-400 bg-red-400 text-[15px] px-4 py-[4px] font-[600] rounded-full cursor-pointer">Tracks</button>
+            <button class="cat_btn border-[2px] border-red-400 text-[15px] px-4 py-[4px] font-[600] rounded-full cursor-pointer">Artists</button>
+            <button class="cat_btn border-[2px] border-red-400 text-[15px] px-4 py-[4px] font-[600] rounded-full cursor-pointer">Albums</button>
         </div>
     </div>
 
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script>lucide.createIcons()</script>
-    <script src="static/js/index.js"></script>
-</body>
-</html>
+    <div class="">
+        <div id="search_res" class="">
+            <!-- Item -->
+            <div id="tracks_parent" class="cat_section grid md:grid-cols-3 grid-cols-1 gap-2 md:py-4 md:pb-0 pb-60">
+                {% if searched %}
+                    {% for res in results['data'] %}
+                    <div data-id="{{ res.id }}" class="song_item flex items-center gap-2 md:px-2 py-1 hover:bg-white/20 rounded-lg overflow-hidden">
+                        <div class="w-10 h-10 aspect-square shrink-0 rounded-md overflow-hidden"><img class="w-full h-full" src="{{ res.album.cover_big }}" alt="{{ res.title }}"></div>
+                        <div class="overflow-hidden whitespace-nowrap w-[75%] overflow-hidden">
+                            <p class="truncate text-[15px] font-[500]">{{ res.title }}</p>
+                            <p class="truncate text-[12px] -mt-[2px]">{{ res.artist.name }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div id="artists_parent" class="cat_section grid md:grid-cols-3 grid-cols-1 gap-2 md:py-4 md:pb-0 pb-60 hidden"></div>
+            <div id="albums_parent" class="cat_section grid md:grid-cols-3 grid-cols-1 gap-2 md:py-4 md:pb-0 pb-60 hidden"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block navHighlight %}
+<script src="/static/js/Search.js"></script>
+<script>highlightNavItem(1);</script>
+{% endblock %}
+

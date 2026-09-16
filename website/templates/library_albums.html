@@ -1,0 +1,42 @@
+{% extends '_base.html' %}
+
+{% block title %}Music Player - Albums{% endblock %}
+
+{% block navlinks %}
+<a href="/" class="flex items-center text-sm gap-3"><div><i data-lucide="home"></i></div><p>Home</p></a>
+<a href="/search" class="flex items-center text-sm gap-3"><div><i data-lucide="search"></i></div><p>Search</p></a>
+<a href="{{ url_for('library.library_home') }}" class="text-red-400 flex items-center text-sm gap-3"><div><i data-lucide="layout-grid"></i></div><p>Library</p></a>
+{% endblock %}
+
+{% block body %}
+<div class="flex items-center gap-3 px-4 pt-5 pb-3 md:mb-1">
+    <a class="md:hidden block" href="{{ url_for('library.library_home') }}"><i data-lucide="chevron-left"></i></a>
+    <p class="text-[28px] font-bold text-white/90">Albums</p>
+</div>
+
+<div class="min-h-screen px-4 {% if total > 0 %}mt-4{% endif %}">
+    <div class="md:pb-0 pb-30">
+        {% if albums|length == 0 %}
+        <p class="text-[15px] md:my-0 my-2 md:text-left text-center text-white/60">Albums you liked will appear here.</p>
+        {% else %}
+        <div class="md:flex flex-wrap grid max-[900px]:grid-cols-4 max-[720px]:grid-cols-3 max-[540px]:grid-cols-2 pb-6 gap-x-3 gap-y-3">
+            {% for album in albums %}
+            <div class="max-w-[170px] cursor-pointer">
+                <a href="/album/{{ album.deezer_id }}">
+                    <div class="w-full aspect-square mb-2 rounded-lg overflow-hidden"><img class="w-full h-full" src="{{ album.cover_xl }}" alt="{{ album.title }}"/></div>
+                    
+                    <div class="w-full overflow-hidden">
+                        <p class="text-white/90 text-[17px] font-[600]">{{ album.title }}</p>
+                        <a href="/artist/{{ album.artist_id }}" class="text-white/65 text-[14px] font-[600]">{{ album.artist_name }}</a>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+
+{% block navHighlight %}<script>highlightNavItem(2);</script>{% endblock %}
