@@ -1,40 +1,74 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YT Downloader - FAQ</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="static/css/style.css">
-</head>
+{% extends '_base.html' %}
 
-<body>
-    <div class="min-h-screen bg-[#eaeaea]">
-        <div class="bg-[#191919] px-3 py-6">
-            <nav class="w-full flex items-center justify-center gap-[2rem] px-[10px]">
-                <a class="text-[#fafafa] hover:text-[#fa0000]" href="/">Home</a>
-                <a class="text-[#fafafa] hover:text-[#fa0000]" href="/about">About</a>
-                <a class="text-[#fafafa] hover:text-[#fa0000]" href="/faq">FAQ</a>
-                <a class="text-[#fafafa] hover:text-[#fa0000]" href="/donate">Donate</a>
-            </nav>
+{% block title %}YT Downloader - FAQ{% endblock %}
 
-            <a href="/" class="block text-white text-center text-5xl mt-[3rem] mb-[2rem]">YT Downloader</a>
 
-            <div class="block mt-[50px] mx-auto max-w-[500px]">
-                <div class="relative mt-4 mb-6">
-                    <form action="/search" >
-                        <input id="q" name="q" placeholder="Search Youtube" type="text" class="flex bg-[#fafafa] h-12 w-full rounded-sm border-0 outline-0 bg-background pl-3 pr-15 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground md:text-sm"/>
-                        
-                        <button type="submit" class="bg-[#fa0000] text-[#fafafa] rounded-tr-sm rounded-br-sm absolute right-0 top-0 h-full aspect-square px-2 flex items-center justify-center cursor-pointer" id="search_btn">
-                            <i data-lucide="search"></i>
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>        
+{% block nav %}
+<a class="text-[#fafafa] hover:text-[#fa0000]" href="{{ url_for('views.home') }}">Home</a>
+<a class="text-[#fa0000]" href="#">FAQ</a>
+<a class="text-[#fafafa] hover:text-[#fa0000]" href="{{ url_for('views.donate') }}">Donate</a>
+{% endblock %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+<div class="py-2 mb-3">
+    <p class="text-[22px] text-black/80 font-bold mb-3">Frequently Asked Questions</p>
+</div>
+
+<div class="flex flex-col gap-3">
+    <div class="bg-white rounded-md shadow-ms w-full py-4 px-3 cursor-pointer">
+        <details>
+            <summary class="text-[16px] text-black/80 font-[500] cursor-pointer">What is YT Downloader?</summary>
+            <p class="mt-5">YT Downloader is a free YouTube video to MP3 converter that lets you download any Youtube video as an MP3 file with coresponding meta data.</p>
+        </details>
+    </div>
+    
+    <div class="bg-white rounded-md shadow-ms w-full py-4 px-3 cursor-pointer">
+        <details>
+            <summary class="text-[16px] text-black/80 font-[500] cursor-pointer">Is YT Downloader free?</summary>
+            <p class="mt-5">Yes. YT Downloader is completely and no sign-up is required.</p>
+        </details>
     </div>
 
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script>lucide.createIcons()</script>
-</body>
-</html>
+    <div class="bg-white rounded-md shadow-ms w-full py-4 px-3 cursor-pointer">
+        <details>
+            <summary class="text-[16px] text-black/80 font-[500] cursor-pointer">Is YT Downloader illegal?</summary>
+            <p class="mt-5">No.</p>
+        </details>
+    </div>
+
+    <div class="bg-white rounded-md shadow-ms w-full py-4 px-3 cursor-pointer">
+        <details>
+            <summary class="text-[16px] text-black/80 font-[500] cursor-pointer">Does YT Downloader have a mobile/desktop app?</summary>
+            <p class="mt-5">No. This website is the only service we provide.</p>
+        </details>
+    </div>
+
+    <div class="bg-white rounded-md shadow-ms w-full py-4 px-3 cursor-pointer">
+        <details>
+            <summary class="text-[16px] text-black/80 font-[500] cursor-pointer">What music can I download?</summary>
+            <p class="mt-5">Any music as long as it is available on YouTube.</p>
+        </details>
+    </div>
+
+    <div  class="bg-white rounded-md shadow-ms w-full py-4 px-3 cursor-pointer">
+        <details>
+            <summary class="text-[16px] text-black/80 font-[500] cursor-pointer">Why am I getting an error?</summary>
+            <div class="mt-5">
+                <p>Please make sure that your YouTube video is not:</p>
+                
+                <div class="my-4">
+                    <p>• age-restricted</p>
+                    <p>• private</p>
+                    <p>• longer than the supported maximum length</p>
+                </div>
+        
+                <p>If none of these apply, you can try converting the file by clicking the “Try again” button on the error page. Should the error persist, please report it to us via our contact form.</p>
+            </div>
+        </details>
+    </div>
+</div>
+{% endblock %}

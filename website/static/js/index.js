@@ -1,4 +1,10 @@
 const results = document.querySelectorAll(".search_result");
+
+const download_status = document.getElementById("download_status");
+const download_status_title = document.getElementById("download_status_title");
+const download_status_artist = document.getElementById("download_status_artist");
+const download_status_img = document.getElementById("download_status_img");
+
 const errorMessages = ["That's weird..", "Uhm...", "There should be something here..", "This doesn't always happen", "We'll fix this", "Please try again"];
 let downloading = false;
 
@@ -65,11 +71,11 @@ results.forEach((res) => {
             return;
         }
 
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 5; i++) {
             if (!tracks[i]) return;
 
             let item = document.createElement("div");
-            item.className = "relative mb-1 flex items-center justify-between py-1 px-3";
+            item.className = "relative mb-1 flex items-center py-1 px-3";
             
             item.innerHTML = `
                 <div class="flex items-center">
@@ -86,10 +92,6 @@ results.forEach((res) => {
                             <p>${tracks[i].album.title}</p>
                         </div>
                     </div>
-                </div>
-
-                <div class="loading-indicator hidden flex items-center gap-3">
-                    <div class="relative block w-[35px] h-[35px] bg-conic from-[#fa0000] from-[75%] to-transparent to-[75%] rounded-full after:absolute after:inset-[3px] after:bg-white after:rounded-full"><div>
                 </div>
             `;
 
@@ -108,7 +110,13 @@ results.forEach((res) => {
         }
 
         downloading = true;
-        element.querySelector(".loading-indicator").classList.remove("hidden");
+        download_status.classList.remove("hidden"); 
+        download_status.querySelector(".loading-bar").classList.remove("hidden");
+
+        download_status.classList.replace("-bottom-[100%]", "bottom-0")
+        download_status_title.innerHTML = title;
+        download_status_artist.innerHTML = artist;
+        download_status_img.setAttribute("src", cover);
 
         fetch(`/download/`, {
             method: "POST",
@@ -146,12 +154,21 @@ results.forEach((res) => {
             `;
         })
         .finally(() => {
-            downloading = false;
-            element.querySelector(".loading-indicator").classList.add("hidden");            
+            downloading = false;  
+            download_status.querySelector(".status_text").innerHTML = "Done!";
+            download_status.querySelector(".loading-bar").classList.add("hidden");
+
+            setTimeout(() => {
+                download_status.classList.replace("bottom-0", "-bottom-[100%]"); 
+                
+                setTimeout(() => {
+                    download_status.classList.add("hidden"); 
+                }, 3500);   
+            }, 3500);       
         })
     }
 
-    const download_track_blank = () => {
+    const download_track_blank = (element) => {
         if (downloading) {
             alert ("Wait for current download to finish!");
             return;
@@ -173,14 +190,16 @@ results.forEach((res) => {
             link.download = `file.mp3`;
             link.click();
 
-           downloading = false;
+            downloading = false;
         })
     }
 
     res.addEventListener("click", () => open());
     res.querySelector(".search_result_btn_close").addEventListener("click", close);
-    res.querySelector(".download_blank").addEventListener("click", download_track_blank)
-
+    
+    const blank_btn = res.querySelector(".download_blank");
+    blank_btn.addEventListener("click", () => download_track_blank(blank_btn));
+    
     let timeout;
     let input = res.querySelector(".search_result_input");
 
@@ -193,3 +212,6 @@ results.forEach((res) => {
     });
 });
 
+// Date
+const date = new Date();
+document.getElementById("cr_text").innerHTML = `YT Downloader &copy${date.getFullYear()}`;

@@ -3,194 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %} Music Player{% endblock %}</title>
+    <title>{% block title %}{% endblock %}</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="static/css/style.css">
 </head>
-<body class="bg-[rgb(30,30,30)] text-white">
-    <div id="root">
-        <div class="relative mx-auto max-w-[1440px] min-h-screen">
-            <aside id="aside" class="fixed md:block hidden min-w-65 h-screen left-0 top-0 p-2 z-99">
-                <div class="backdrop-blur-lg flex flex-col justify-between w-full h-full px-5 py-6 border-1 border-white/20 rounded-[25px]">
-                    <div class="">
-                        <div class="font-[500] text-xl">Music</div>
 
-                        <div class="flex flex-col gap-6 mt-8">
-                            {% block navlinks %}
-                            <a href="/" class="flex items-center text-sm gap-3"><div><i data-lucide="home"></i></div><p>Home</p></a>
-                            <a href="/search" class="flex items-center text-sm gap-3"><div><i data-lucide="search"></i></div><p>Search</p></a>
-                            <a href="/library" class="flex items-center text-sm gap-3"><div><i data-lucide="layout-grid"></i></div><p>Library</p></a>
-                            {% endblock %}
-                        </div>
-                    </div>
+<body>
+    <div class="min-h-screen bg-[#eaeaea]">
+        <div class="bg-[#191919] px-3 py-8">
+            <div class="max-w-[550px] mx-auto flex items-center justify-between">
+                <a href="/" class="text-white text-center md:text-3xl text-xl font-bold">YT Downloader</a>
+
+                <nav class="flex items-center justify-center gap-[2rem] px-[10px]">
+                    {% block nav %}
+                    <a class="text-[#fafafa] hover:text-[#fa0000]" href="{{ url_for('views.home') }}">Home</a>
+                    <a class="text-[#fafafa] hover:text-[#fa0000]" href="{{ url_for('views.faq') }}">FAQ</a>
+                    <a class="text-[#fafafa] hover:text-[#fa0000]" href="{{ url_for('views.donate') }}">Donate</a>
+                    {% endblock %}
+                </nav>
+            </div>
+
+            <div class="block max-w-[550px] mx-auto my-4">
+                {% block head %}
+                <form class="relative mt-12" action="search">
+                    <input required id="q" name="q" placeholder="Search music" type="text" class="flex bg-[#fafafa] h-12 w-full rounded-sm border-0 outline-0 bg-background pl-3 pr-15 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground md:text-sm"/>
                     
-                    <div class="">
-                        {% if user.is_authenticated %}
-                            {% block user_btn %}
-                            <a href="{{ url_for('auth.account') }}" class="flex items-center gap-3">
-                                <div><i data-lucide="user-circle"></i></div>
-                                <p>{{ user.f_name }} {{ user.l_name }}</p>
-                            </a>
-                            {% endblock %}
-                        {% else %}
-                            <a href="{{ url_for('auth.sign_in') }}" class="block bg-red-500 text-[16px] px-4 py-[5px] font-bold rounded-full cursor-pointer">Sign In</a>
-                        {% endif %}
-                    </div>
-                </div>
-            </aside>
-            
-            <main id="main" class="relative h-screen">
-                {% block body %}{% endblock %}
+                    <button type="submit" class="bg-[#fa0000] text-[#fafafa] rounded-tr-sm rounded-br-sm absolute right-0 top-0 h-full aspect-square px-2 flex items-center justify-center cursor-pointer" id="search_btn">
+                        <i data-lucide="search"></i>
+                    </button>
+                </form>
+                {% endblock %}
+            </div>
+        </div>  
+        
+        <div class="relative max-w-[550px] min-h-[80vh] mx-auto px-2 py-5">
+            {% block body %}
+            {% endblock %}
+        </div>
 
-                <div id="f_player" class="hidden w-full h-screen flex flex-col left-0 top-0 bg-[rgb(30,30,30)] z-999">
-                    <button id="exit_btn" class="absolute left-3 top-2"><i class="size-[24px]" data-lucide="x"></i></button>
-                    
-                    <div class="block mx-auto md:w-[400px]">
-                        <div class="px-6 md:py-6 py-12">
-                            <div id="player_fs" class="player_fs">
-                                <div class="img_box aspect-square"><img class="current-song-art w-full" src="" alt=""></div>
-                                
-                                <div class="flex items-center justify-between flex-grow">
-                                    <div class="w-[70%] turnicate overflow-hidden">
-                                        <p class="title-text truncate">Title</p>
-                                        <p class="artist-text truncate">Artist</p>
-                                    </div>
-
-                                    <div class="flex items-center gap-5">
-                                        <button class="option_btn cursor-pointer"><i class="size-[22]" data-lucide="heart"></i></button>
-                                        <button class="option_btn cursor-pointer"><i class="size-[22]" data-lucide="ellipsis"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div id="queue_fs" class="py-2">
-                                <p class="text-[20px] text-white/90 font-[600] py-2">Queue</p>
-                            </div>
-                        </div>
-
-                        <div class="md:flex-grow px-6 py-4">
-                            <!-- Time Bar -->
-                            <div class="relative mb-8">
-                                <div class="song-progress-bar relative w-full h-2 mb-3 bg-white/30 rounded-full cursor-pointer overflow-hidden">
-                                    <div class="absolute bg-white h-full left-0 top-0"></div>
-                                </div>
-
-                                <div class="flex items-center justify-between">
-                                    <p class="text-white/80 elapsed-time text-[14px]">0:00</p>
-                                    <p class="text-white/80 total-time text-[14px]">0:01</p>
-                                </div>
-                            </div>
-                            
-                            <!-- Actions -->
-                            <div class="flex items-center justify-between">
-                                <button class="cursor-pointer"><i class="size-[24px]" data-lucide="shuffle"></i></button>
-                                <button><i class="size-[32px] fill-white" data-lucide="rewind"></i></button>
-                                <button class="play-button pause cursor-pointer">
-                                    <i class="play size-[38px] fill-white" data-lucide="play"></i>
-                                    <i class="pause size-[38px] fill-white" data-lucide="pause"></i>
-                                </button> 
-                                <button><i class="size-[32px] fill-white" data-lucide="fast-forward"></i></button>
-                                <button id="queue_btn" class="cursor-pointer">
-                                    <i class="size-[24px] open" data-lucide="list-music"></i>
-                                    <i class="size-[24px] close" data-lucide="x"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div data-id="" id="opt_screen" class="hidden left-0 top-0 w-full h-screen bg-black/45 z-1000 p-2 flex items-center justify-center">
-                    <div class="bg-[rgb(35,35,35)] w-[90%] md:w-[400px] px-2 py-4 rounded-md">
-                        <div class="relative flex items-center gap-3 px-1 pt-1 pb-[8px] mb-2 border-b-1 border-white/30 cursor-pointer">
-                            <div class="w-13 h-13 shrink-0 aspect-square rounded-md overflow-hidden"><img class="w-full h-full" src="" alt=""></div>
-                            
-                            <div class="w-full truncate">
-                                <p class="opt_title truncate text-[15px]">Title</p>
-                                <p class="opt_artist truncate text-[13px] text-white/80 font-[500] -mt-1">Artist</p>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col items-start px-2 py-3 gap-3">
-                            <button class="flex items-center gap-3 bg-white/15 w-full py-3 px-2 text-left rounded-md cursor-pointer"><i data-lucide="list-start"></i><p>Play Next</p></button>
-                            <button class="flex items-center gap-3 bg-white/15 w-full py-3 px-2 text-left rounded-md cursor-pointer"><i data-lucide="list-end"></i><p>Add To Queue</p></button>
-                            <button id="like_btn" class="flex items-center gap-3 bg-white/15 w-full py-3 px-2 text-left rounded-md cursor-pointer"><i data-lucide="heart"></i><p>Like Song</p></button>
-                            <button class="flex items-center gap-3 bg-white/15 w-full py-3 px-2 text-left rounded-md cursor-pointer"><i data-lucide="list-plus"></i><p>Add To Playlist</p></button>
-                        </div>
-                    </div>
-                </div>
-            
-                <div class="md:sticky fixed flex items-center justify-center left-0 md:bottom-0 bottom-[70px] w-full px-2 md:pb-4 pb-1 md:translate-x-0 z-100">
-                    <div class="backdrop-blur-lg relative flex md:justify-start justify-between border-1 border-white/20 md:w-[4/5] min-[1000px]:w-[80%] w-full px-5 md:py-2 py-[6px] rounded-full">
-                        <!-- Song Info -->
-                        <div id="open_player" class="flex md:w-[31.5%] w-[77%] gap-2 md:mr-1 items-center">
-                            <div class="md:w-10 md:h-10 w-9 h-9 shrink-0 overflow-hidden rounded-sm cursor-pointer">
-                                <img src="" alt="" class="current-song-art w-full h-full"/>
-                            </div>
-                            
-                            <div class="flex flex-col justify-center overflow-hidden whitespace-nowrap w-full">
-                                <p class="title-text text-[16px] cursor-pointer">Title</p>
-                                <p class="artist-text text-[13px] text-white/50 -mt-1 cursor-pointer">Artist</a>
-                            </div>
-                        </div>
-
-                        <!-- Controls -->
-                        <div class="flex md:flex-col items-center justify-between">
-                            <div class="flex md:items-start items-center gap-5 md:mb-2">
-                                <button class="md:block hidden cursor-pointer"><i class="fill-white" data-lucide="rewind"></i></button>
-                                <button class="play-button pause cursor-pointer">
-                                    <i class="play fill-white" data-lucide="play"></i>
-                                    <i class="pause fill-white" data-lucide="pause"></i>
-                                </button> 
-                                <button class="cursor-pointer"><i class="fill-white" data-lucide="fast-forward"></i></button>
-                            </div>
-
-                            <div class="md:block hidden relative">
-                                <p class="elapsed-time absolute left-0 -bottom-[100%] mb-2 text-[12px]">0:00</p>
-                                <p class="total-time absolute right-0 -bottom-[100%] mb-2 text-[12px]">0:01</p>
-                                
-                                <div class="song-progress-bar relative w-75 h-[3px] bg-white/30 rounded-full cursor-pointer overflow-hidden">
-                                    <div class="absolute bg-white h-full left-0 top-0"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Actions -->
-                        <div class="md:flex hidden w-[31.5%] ml-1 justify-end items-center gap-6">
-                            <button class="cursor-pointer"><i class="w-[18px]" data-lucide="heart"></i></button>
-                            <button onClick={CyclePlaybackModes} class="cursor-pointer"><i class="w-[18px]" data-lucide="shuffle"></i></button>
-                            <button class="cursor-pointer"><i class="w-[18px]" data-lucide="list-music"></i></button>
-                            <button class="max-[900px]:hidden cursor-pointer"><i class="w-[18px]" data-lucide="volume-2"></i></button>
-                        </div>
-                    </div>
+        <footer class="md:py-5 py-10 border-t border-black/20">
+            <div class="max-w-[550px] mx-auto">
+                <div class="flex items-center justify-center gap-4 mb-3">
+                    <a href="{{ url_for('views.contact') }}" class="text-black/85 text-[15px]">Contact</a>
+                    <a href="{{ url_for('views.copyright_page') }}" class="text-black/85 text-[15px]">Copyright</a>
+                    <a href="{{ url_for('views.privacy_policy') }}" class="text-black/85 text-[15px]">Privacy Policy</a>
+                    <a href="{{ url_for('views.terms_of_use') }}" class="text-black/85 text-[15px]">Terms of Use</a>
                 </div>
                 
-                <div class="md:hidden fixed flex p-2 w-full left-1/2 bottom-0 -translate-x-1/2 z-100">
-                    <div class="backdrop-blur-lg relative flex md:justify-start justify-between border-1 border-white/20 md:w-[4/5] min-[1000px]:w-[90%] w-full p-1 rounded-full">
-                        <a href="/" class="mobile-nav-link flex flex-col gap-[2px] items-center px-6 py-1 rounded-full"><i class="w-[20px]" data-lucide="home"></i><p class="text-[10px]">Home</p></a>
-                        <a href="/search" class="mobile-nav-link flex flex-col gap-[2px] items-center px-6 py-1 rounded-full"><i class="w-[20px]" data-lucide="search"></i><p class="text-[10px]">Search</p></a>
-                        <a href="/library" class="mobile-nav-link flex flex-col gap-[2px] items-center px-6 py-1 rounded-full"><i class="w-[20px]" data-lucide="layout-grid"></i><p class="text-[10px]">Library</p></a>
-                        <a href="/account" class="mobile-nav-link flex flex-col gap-[2px] items-center px-6 py-1 rounded-full"><i class="w-[20px]" data-lucide="user-circle"></i><p class="text-[10px]">You</p></a>
-                        
-                        <div class="mobile-nav-link-highlight absolute bg-white/10 text-red-400 rounded-full transition-all duration-200 z-1"></div>
-                    </div>
-                </div>
-            </main>
-        </div>
+                <p class="text-center text-black/85 text-[16px]" id="cr_text">YT Downloader &copy</p>
+            </div>
+        </footer>
     </div>
 
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>lucide.createIcons()</script>
-
-    <script src="/static/js/Player.js"></script>
-    <script>
-        const main = document.getElementById("main");
-        const aside = document.getElementById("aside");
-        main.classList.add(`md:pl-[${aside.offsetWidth}px]`)
-
-        window.addEventListener("resize", () => {
-            main.classList.add(`md:pl-[${aside.offsetWidth}px]`);
-        })
-    </script>
-    {% block navHighlight %}{% endblock %}
+    <script src="/static/js/index.js"></script>
+    {% block script %}{% endblock %}
 </body>
 </html>

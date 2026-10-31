@@ -1,19 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YT Downloader - Make a Donation</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="static/css/style.css">
-</head>
+{% extends '_base.html' %}
 
-<body>
-    <div class="min-h-screen bg-[#eaeaea]">
-               
+{% block title %}YT Downloader - Make a Donation{% endblock %}
+
+
+{% block nav %}
+<a class="text-[#fafafa] hover:text-[#fa0000]" href="{{ url_for('views.home') }}">Home</a>
+<a class="text-[#fafafa] hover:text-[#fa0000]" href="{{ url_for('views.faq') }}">FAQ</a>
+<a class="text-[#fa0000]" href="#">Donate</a>
+{% endblock %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+<div class="py-2">
+    <p class="text-[22px] text-black/80 font-bold mb-3">Make a Donation</p>
+</div>
+
+<div class="bg-white rounded-md shadow-ms w-full py-7 px-4">
+    <p class="text-[15px] text-gray-600 mb-6">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio aliquid molestias hic qui aliquam odit cumque, voluptatum dolore expedita dolorum repellat earum quas sint adipisci. Possimus minus veniam ad consectetur?
+    </p>
+
+    <div class="flex items-center gap-3 py-2 mb-2 border-b-1 border-black/15">
+        <p class="">Country:</p>
+        <select name="region" id="region" class="px-3 py-1">
+            <option value="za">South Africa</option>
+        </select>
     </div>
 
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script>lucide.createIcons()</script>
-</body>
-</html>
+    <div class="">
+        <p class="py-3 text-center text-[16px]">Donation Amount (ZAR):</p>
+
+        <form>
+            <div class="grid grid-cols-4 gap-3 mb-4">
+                <input type="radio" id="amt_1" name="amount" class="hidden" value="25">
+                <label for="amt_1" class="bg-black/5 px-2 py-2 text-center text-[16px] border-1 border-black/15 hover:bg-black/10 cursor-pointer">R 25</label>
+
+                <input type="radio" id="amt_2" name="amount" class="hidden" value="50">
+                <label for="amt_2" class="bg-black/5 px-2 py-2 text-center text-[16px] border-1 border-black/15 hover:bg-black/10 cursor-pointer">R 50</label>
+
+                <input type="radio" id="amt_3" name="amount" class="hidden" value="100">
+                <label for="amt_3" class="bg-black/5 px-2 py-2 text-center text-[16px] border-1 border-black/15 hover:bg-black/10 cursor-pointer">R 100</label>
+
+                <input type="radio" id="amt_4" name="amount" class="hidden" value="200">
+                <label for="amt_4" class="bg-black/5 px-2 py-2 text-center text-[16px] border-1 border-black/15 hover:bg-black/10 cursor-pointer">R 200</label>
+
+                <input type="radio" id="amt_5" name="amount" class="hidden" value="300">
+                <label for="amt_5" class="bg-black/5 px-2 py-2 text-center text-[16px] border-1 border-black/15 hover:bg-black/10 cursor-pointer">R 300</label>
+
+                <input type="radio" id="amt_6" name="amount" class="hidden" value="500">
+                <label for="amt_6" class="bg-black/5 px-2 py-2 text-center text-[16px] border-1 border-black/15 hover:bg-black/10 cursor-pointer">R 500</label>
+
+                <input type="radio" id="amt_7" name="amount" class="hidden" value="1 000">
+                <label for="amt_7" class="bg-black/5 px-2 py-2 text-center text-[16px] border-1 border-black/15 hover:bg-black/10 cursor-pointer">R 1 000</label>
+            
+                <input type="radio" id="amt_8" name="amount" class="hidden" value="0">
+                <label for="amt_8" class="bg-black/5 px-1 py-2 text-center text-[16px] border-1 border-black/15 hover:bg-black/10 cursor-pointer">Own Amount</label>
+            </div>
+
+            <div class="mb-6" id="own_amount_section">
+                <p class="text-[16px] text-black/80 font-[400] mb-2">Amount</p>
+                <input name="own_amount" id="own_amount" type="number" min="1" class="w-full text-[15px] px-2 py-2 border-1 border-black/15 rounded-md focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" required>
+            </div>
+
+            <div class="">
+                <button type="submit" id="own_amount_btn" class="bg-[#191919] w-full py-3 text-center text-white rounded-md transition-all duration-350 cursor-pointer disabled:bg-black/50 disabled:cursor-not-allowed" disabled>Continue</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}<script src="/static/js/donate.js"></script>{% endblock %}

@@ -1,10 +1,9 @@
+from mutagen.id3 import (ID3, APIC, ID3NoHeaderError, TPE1, TPE2, TIT2, TALB, TDRC, TRCK, TCON)
 from yt_dlp import YoutubeDL
 import requests
 import yt_dlp
 import os
 import re
-from mutagen.id3 import (ID3, APIC, ID3NoHeaderError, TPE1, TIT2, TALB, TDRC, TRCK, TCON)
-
 
 ### Search ###
 def search_yt(query, max_results):
@@ -19,38 +18,34 @@ def search_yt(query, max_results):
     results = []
     for entry in info['entries']:
         try :
-            item = {
-                "video_id" : entry['id'],
-                "title" : entry['title'],
-                "author" : entry['channel'],
-                "title_clean" : clean_title(entry['title']),
-                "thumbnail" : entry['thumbnails'],
-                "duration" : seconds_minutes(entry['duration']),
-            }
+            if entry['duration'] < 900:
+                item = {
+                    "video_id" : entry['id'],
+                    "title" : entry['title'],
+                    "author" : entry['channel'],
+                    "title_clean" : clean_title(entry['title']),
+                    "thumbnail" : entry['thumbnails'],
+                    "duration" : seconds_minutes(entry['duration']),
+                }
 
-            results.append(item)
+                results.append(item)
         except KeyError:
             pass
 
     return results
 
-### Convert ###
-def seconds_minutes(seconds) -> str:
-    minutes = int(seconds) // 60
-    remaining_seconds = int(seconds) % 60
-    if (remaining_seconds < 10):
-        remaining_seconds = "0" + str(remaining_seconds)
-
-    return f"{minutes}:{remaining_seconds}"
-
-### Download Video ###
 def download_mp3(video_id, title, artist, album, cover, year, genre, track_number):
+    for file in os.listdir("website/static/downloads/"):
+       os.remove(f"website/static/downloads/{file}") # Deletes every download before downloading new file
+
     url = f"https://www.youtube.com/watch?v={video_id}"
 
     ydl_opts = {
+        "cookiefile": 'website/cookies/cookies.txt',
+        'ffmpeg_location': 'website/ffmpeg/',
         "format": "bestaudio/best",
         "outtmpl": "website/static/downloads/%(title)s.%(ext)s",
-        "js_runtime": "node",
+        "js_runtimes": {'node': {}},
         "no_warnings": True,
         "postprocessors": [{
             "key": "FFmpegExtractAudio",
@@ -64,20 +59,17 @@ def download_mp3(video_id, title, artist, album, cover, year, genre, track_numbe
         info = ydl.extract_info(url, download=False)
     
         for file in os.listdir("website/static/downloads/"):
-            if file == info["title"] + ".mp3":
+            if file == clean_filename(info["title"] + ".mp3"):
                 try:
-                    os.rename(("website/static/downloads/" + file), f"website/static/downloads/{artist} - {title}.mp3")
+                    os.rename(("website/static/downloads/" + file), f"website/static/downloads/{clean_filename(artist)} - {clean_filename(title)}.mp3")
                 except FileNotFoundError:
-                    pass
                     print(f"Error: The file '{file}' was not found.")
                 except FileExistsError:
-                    pass
                     print(f"Error: The destination file '{file}' already exists.")
                 except Exception as e:
-                    pass
                     print(f"An unexpected error occurred while renaming the file '{file}' : {e}")
 
-                path = f"website/static/downloads/{artist} - {title}.mp3"
+                path = f"website/static/downloads/{clean_filename(artist)} - {clean_filename(title)}.mp3"
             
                 try:
                     tags = ID3(path)
@@ -86,6 +78,7 @@ def download_mp3(video_id, title, artist, album, cover, year, genre, track_numbe
 
                 tags.setall("TIT2", [TIT2(encoding=3, text=title)])     # title
                 tags.setall("TPE1", [TPE1(encoding=3, text=artist)])    # artist
+                tags.setall("TPE2", [TPE2(encoding=3, text=artist)])    # album artist
                 tags.setall("TALB", [TALB(encoding=3, text=album)])     # album
 
                 tags.setall("TDRC", [TDRC(encoding=3, text=year)])             # year
@@ -114,13 +107,16 @@ def download_mp3(video_id, title, artist, album, cover, year, genre, track_numbe
                     "file_path" : path
                 }
 
-### Download Video Blank ###
 def download_mp3_blank(video_id):
+    for file in os.listdir("website/static/downloads/"):
+        os.remove(f"website/static/downloads/{file}") # Deletes every download before downloading new file
+
     url = f"https://www.youtube.com/watch?v={video_id}"
 
     ydl_opts = {
         "format": "bestaudio/best",
         "outtmpl": "website/static/downloads/%(title)s.%(ext)s",
+        'ffmpeg_location': 'website/ffmpeg/',
         "js_runtime": "node",
         "no_warnings": True,
         "postprocessors": [{
@@ -137,7 +133,7 @@ def download_mp3_blank(video_id):
         for file in os.listdir("website/static/downloads/"):
             if file == info["title"] + ".mp3":
                 try:
-                    os.rename(("website/static/downloads/" + file), clean_title(f"website/static/downloads/{file}"))
+                    os.rename(("website/static/downloads/" + file), f"website/static/downloads/{clean_title(file)}")
                 except FileNotFoundError:
                     pass
                     print(f"Error: The file '{file}' was not found.")
@@ -157,6 +153,15 @@ def download_cover(url: str):
     img = requests.get(url, timeout=10)
     img.raise_for_status()
     return img.content
+
+### Convert ###
+def seconds_minutes(seconds) -> str:
+    minutes = int(seconds) // 60
+    remaining_seconds = int(seconds) % 60
+    if (remaining_seconds < 10):
+        remaining_seconds = "0" + str(remaining_seconds)
+
+    return f"{minutes}:{remaining_seconds}"
 
 ### Rename ###
 def clean_title(title: str) -> str:
@@ -203,3 +208,15 @@ def clean_title(title: str) -> str:
     title = re.sub(r"\s+", " ", title).strip()
 
     return title
+
+def clean_filename(filename):
+    # List of common characters forbidden in Windows/Linux/macOS filenames
+    replacement="_"
+    invalid_chars = [':', '\\', '/', '*', '?', '"', '<', '>', '|']
+    
+    # Replace each invalid character with the replacement character
+    cleaned_name = filename
+    for char in invalid_chars:
+        cleaned_name = cleaned_name.replace(char, replacement)
+        
+    return cleaned_name

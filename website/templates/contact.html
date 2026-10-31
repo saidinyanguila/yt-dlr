@@ -1,0 +1,47 @@
+{% extends '_base.html' %}
+
+{% block title %}YT Downloader - Contact Us{% endblock %}
+
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+<div class="py-2">
+    <p class="text-[22px] text-black/80 font-bold mb-3">Contact Us</p>
+</div>
+
+<div class="bg-white rounded-md shadow-ms w-full py-7 px-4">
+    <p class="text-[15px] text-gray-600 mb-4">If you have any questions or feedback, simply fill out the form below and click Send. To report an error, please include the YouTube video title and the error code in your message.</p>
+
+    <div class="">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <p class="text-[16px] text-gray-600 font-[500] mb-6">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="post">
+        <div class="mb-4">
+            <p class="text-[16px] text-black/80 font-[400] mb-2">Name</p>
+            <input name="name" type="text" minlength="2" class="w-full text-[15px] px-2 py-2 border-1 border-black/15 rounded-md focus:outline-none" required>
+        </div>
+
+        <div class="mb-4">
+            <p class="text-[16px] text-black/80 font-[400] mb-2">Email</p>
+            <input name="email" type="email" class="w-full text-[15px] px-2 py-2 border-1 border-black/15 rounded-md focus:outline-none" required>
+        </div>
+
+        <div class="mb-4">
+            <p class="text-[16px] text-black/80 font-[400] mb-2">Message</p>
+            <textarea name="msg" id="usr_msg" class="w-full h-[150px] text-[15px] px-2 py-2 border-1 border-black/15 rounded-md resize-none focus:outline-none"></textarea>
+        </div>
+
+        <button type="submit" class="bg-[#191919] text-white text-[15px] px-5 py-2 rounded-md cursor-pointer">Send</button>
+    </form>
+    </div>
+</div>
+{% endblock %}

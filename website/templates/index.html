@@ -1,64 +1,42 @@
 {% extends '_base.html' %}
 
-{% block title %}Music Player - Home{% endblock %}
+{% block title %}YT Downloader - Free Youtube to MP3 Converter{% endblock %}
 
-{% block navlinks %}
-<a href="/" class="text-red-400 flex items-center text-sm gap-3"><div><i data-lucide="home"></i></div><p>Home</p></a>
-<a href="/search" class="flex items-center text-sm gap-3"><div><i data-lucide="search"></i></div><p>Search</p></a>
-<a href="/library" class="flex items-center text-sm gap-3"><div><i data-lucide="layout-grid"></i></div><p>Library</p></a>
+{% block nav %}
+<a class="text-[#fa0000]" href="#">Home</a>
+<a class="text-[#fafafa] hover:text-[#fa0000]" href="{{ url_for('views.faq') }}">FAQ</a>
+<a class="text-[#fafafa] hover:text-[#fa0000]" href="{{ url_for('views.donate') }}">Donate</a>
 {% endblock %}
 
 {% block body %}
-<div class="px-4 py-5 md:mb-3">
-    <p class="text-[28px] font-bold text-white/90">Home</p>
+<div class="py-2 mb-3">
+    <p class="text-[22px] text-black/80 font-bold mb-3">Welcome to YT Downloader</p>
+
+    <p class="text-[16px] text-black/75">
+        YT Downloader is the easiest way to convert YouTube videos to MP3 files with coresponding meta data and download them to your device. YT Downloader is free and doesn't require any sign-up or subscription. It's optimized to work on all kinds of devices, such as computers, tablets and mobile phones - the only requirement is a modern web browser. By using YT Downloader, you accept our <a class="underline" href="">Terms of Use</a>.
+    </p>
 </div>
 
-<div class="min-h-screen px-4">
-    <!-- Welcome Items -->
-    <div class="mb-6">
-        <p class="text-white/90 text-[18px] font-[600] mb-2">For You</p>
-        <div class="relative w-full overflow-x-auto no-scrollbar">
-            <div class="flex pb-3 gap-x-3">
-                {% for item in welcomeItems %}
-                <div class="relative min-w-[225px] h-[285px] rounded-lg overflow-hidden cursor-pointer">
-                    <div class="absolute inset-0 bg-[{{item.bg}}]"></div>
-                    
-                    <div class="absolute z-99 bottom-2 left-2 font-bold">
-                        <p class="text-[11px]">{{item.label}}</p>
-                        <p class="text-[17px]">{{item.name}}</p>
-                        <p class="text-[13px]">{{item.info}}</p>
-                    </div>
-                </div>
-                {% endfor %}   
-            </div>
-        </div>
+<div class="py-2">
+    <p class="text-[19px] text-black/80 font-bold mb-1">How to use</p>
+
+    <div class="text-[15px] mb-3">
+        <b class="text-black/80">1. Search Music</b> 
+        <p class="">Use the search bar to search for the song you wish to download. Please note that <a href="{{ url_for('views.home') }}">YT Downloader</a> doesnot host any of the files locally, it provides users with links to download the audio files directly, simplifying the process of finding and acquiring MP3s.</p>
+    </div>
+    
+    <div class="text-[15px] mb-3">
+        <b class="text-black/80">2. Choose audio tags</b> 
+        <p class="">After clicking on the song you wish to download, you will be presented with options for the meta tags available for the song. If the tags present do not match the song you've clicked, you can use the search bar above to further narrow the search or download the audio file without tags by clicking the "Download Audio Only" option.</p>
     </div>
 
-    <!-- Recents -->
-    <div class="mb-6">
-        <p class="text-white/90 text-[18px] font-[600] mb-2">Recently Played</p>
-        <div class="relative w-full overflow-x-auto no-scrollbar">
-            <div class="flex gap-2">
-                {% for item in recents %}
-                <a class="block p-0 mx-0" href="/album/{{ item.album_id }}">
-                    <div class="relative min-w-[175px] max-w-[175px] cursor-pointer"> 
-                        <div class="w-full mb-2 aspect-square rounded-lg overflow-hidden"><img src="{{ item.cover_xl }}" alt="{{ item.album_name }}"></div>
-                        <div class="w-full overflow-hidden">
-                            <p class="truncate text-[15px] font-bold">{{ item.title }}</p>
-                            <a href="/artist/{{ item.artist_id }}" class="truncate block -mt-[2px] text-[12px] text-white/55 hover:text-white">{{ item.artist_name }}</a>
-                        </div>
-                    </div>
-                </a>
-                {% endfor %}   
-            </div>
-        </div>
+    <div class="text-[15px] mb-3">
+        <b class="text-black/80">3. Download</b> 
+        <p class="">Clicking on the audio option will begin the conversion and download proccess. Please keep in mind that you can only convert one file at a time.</p>
     </div>
+</div>
 
-    <!-- More Like [Artist] -->
-
-    <!-- From Your Librart (Albums & Playlists) -->
+<div class="py-2">
+    <p class="text-[16px] text-black/80">Thank you for using our service. Enjoy.</p>
 </div>
 {% endblock %}
-
-{% block navHighlight %}<script>highlightNavItem(0);</script>{% endblock %}
-

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, jsonify, request, redirect, url_for
+from flask import Blueprint, render_template, jsonify, request, redirect, url_for, flash
 from .functions import search_yt, download_mp3, download_mp3_blank
 import requests
 
@@ -22,16 +22,42 @@ def donate():
 
 @views.route("/search")
 def search():
-    if 'q' in request.args:
-        query = request.args.get('q')
+    try:
+        if 'q' in request.args:
+            query = request.args.get('q')
 
-        if len(query.strip()) < 1:
-            return redirect(url_for('views.home'))
+            if len(query.strip()) < 1:
+                return redirect(url_for('views.home'))
+            else:
+                videos = search_yt(query, 10)
+                return render_template("search.html", query=query, videos=videos)
         else:
-            videos = search_yt(query, 10)
-            return render_template("search.html", query=query, videos=videos)
-    else:
-        return redirect(url_for('views.home'))
+            return redirect(url_for('views.home'))
+    except Exception as e:
+        return render_template("error_search.html", query=query, error=e)
+        
+@views.route("/contact", methods=['GET', 'POST'])
+def contact():
+    if request.method == 'POST':
+        name = request.form.get("name")
+        email = request.form.get("email")
+        msg = request.form.get("msg")
+
+        flash(f"Thank you for your feedback, a response will typically take 2-4 business days.", category="submited")
+
+    return render_template("contact.html")
+
+@views.route("/copyright")
+def copyright_page():
+    return render_template("copyright.html")
+
+@views.route("/privacy-policy")
+def privacy_policy():
+    return render_template("privacy-policy.html")
+
+@views.route("/terms-of-use")
+def terms_of_use():
+    return render_template("terms-of-use.html")
 
 @views.route("/tags/<query>")
 def search_tags(query):

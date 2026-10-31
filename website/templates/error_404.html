@@ -1,0 +1,14 @@
+{% extends '_base.html' %}
+
+{% block title %}YT Downloader - Page not found{% endblock %}
+
+
+{% block head %}
+<div class="flex items-center justify-center gap-3 mb-4 text-white">
+    <p class="text-center text-4xl font-bold">Page Not Found</p>
+    <i class="mt-1" data-lucide="unlink"></i>
+</div>
+
+<p class="text-white text-center text-[16px] font-[400]">Just how did we end up here? <a class="text-[#fa0000]" href="{{ url_for('views.home') }}">Go Home.</a></p>
+{% endblock %}
+
