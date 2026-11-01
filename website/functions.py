@@ -1,9 +1,14 @@
 from mutagen.id3 import (ID3, APIC, ID3NoHeaderError, TPE1, TPE2, TIT2, TALB, TDRC, TRCK, TCON)
 from yt_dlp import YoutubeDL
+import static_ffmpeg
 import requests
 import yt_dlp
 import os
 import re
+
+### ffmpeg ###
+static_ffmpeg.add_paths()
+# ffmpeg_dir = static_ffmpeg.run.get_or_fetch_platform_executables_else_raise()
 
 ### Search ###
 def search_yt(query, max_results):
@@ -42,7 +47,7 @@ def download_mp3(video_id, title, artist, album, cover, year, genre, track_numbe
 
     ydl_opts = {
         "cookiefile": 'website/cookies/cookies.txt',
-        'ffmpeg_location': 'website/ffmpeg/',
+        # 'ffmpeg_location': ffmpeg_dir,
         "format": "bestaudio/best",
         "outtmpl": "website/static/downloads/%(title)s.%(ext)s",
         "js_runtimes": {'node': {}},
@@ -116,7 +121,7 @@ def download_mp3_blank(video_id):
     ydl_opts = {
         "format": "bestaudio/best",
         "outtmpl": "website/static/downloads/%(title)s.%(ext)s",
-        'ffmpeg_location': 'website/ffmpeg/',
+        # 'ffmpeg_location': ffmpeg_dir,
         "js_runtime": "node",
         "no_warnings": True,
         "postprocessors": [{
