@@ -1,14 +1,17 @@
 from mutagen.id3 import (ID3, APIC, ID3NoHeaderError, TPE1, TPE2, TIT2, TALB, TDRC, TRCK, TCON)
 from yt_dlp import YoutubeDL
+from threading import Lock
 import static_ffmpeg
 import requests
 import yt_dlp
 import os
 import re
 
+### Threads ###
+download_lock = Lock()
+
 ### ffmpeg ###
 static_ffmpeg.add_paths()
-# ffmpeg_dir = static_ffmpeg.run.get_or_fetch_platform_executables_else_raise()
 
 ### Search ###
 def search_yt(query, max_results):
@@ -40,24 +43,30 @@ def search_yt(query, max_results):
     return results
 
 def download_mp3(video_id, title, artist, album, cover, year, genre, track_number):
-    for file in os.listdir("website/static/downloads/"):
-       os.remove(f"website/static/downloads/{file}") # Deletes every download before downloading new file
+    if not download_lock.acquire(blocking=False):
+        return {"error": "Another download is already running"}
 
-    url = f"https://www.youtube.com/watch?v={video_id}"
+    try:
+        for file in os.listdir("website/static/downloads/"):
+            os.remove(f"website/static/downloads/{file}") # Deletes every download before downloading new file
 
-    ydl_opts = {
-        "cookiefile": 'website/cookies/cookies.txt',
-        # 'ffmpeg_location': ffmpeg_dir,
-        "format": "bestaudio/best",
-        "outtmpl": "website/static/downloads/%(title)s.%(ext)s",
-        "js_runtimes": {'node': {}},
-        "no_warnings": True,
-        "postprocessors": [{
-            "key": "FFmpegExtractAudio",
-            "preferredcodec": "mp3",
-            "preferredquality": "192",
-        }],
-    }
+        url = f"https://www.youtube.com/watch?v={video_id}"
+
+        ydl_opts = {
+            "cookiefile": 'website/cookies/cookies.txt',
+            # 'ffmpeg_location': ffmpeg_dir,
+            "format": "bestaudio/best",
+            "outtmpl": "website/static/downloads/%(title)s.%(ext)s",
+            "js_runtimes": {'node': {}},
+            "no_warnings": True,
+            "postprocessors": [{
+                "key": "FFmpegExtractAudio",
+                "preferredcodec": "mp3",
+                "preferredquality": "192",
+            }],
+        }
+    finally:
+        download_lock.release()
 
     with YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
