@@ -44,7 +44,10 @@ def search_yt(query, max_results):
 
 def download_mp3(video_id, title, artist, album, cover, year, genre, track_number):
     if not download_lock.acquire(blocking=False):
-        return {"error": "Another download is already running"}
+        return {
+            "ok" : False,
+            "error": "Another download is already running."
+        }
 
     try:
         for file in os.listdir("website/static/downloads/"):
@@ -65,61 +68,61 @@ def download_mp3(video_id, title, artist, album, cover, year, genre, track_numbe
                 "preferredquality": "192",
             }],
         }
+    
+        with YoutubeDL(ydl_opts) as ydl:
+            ydl.download([url])
+            info = ydl.extract_info(url, download=False)
+        
+            for file in os.listdir("website/static/downloads/"):
+                if file == clean_filename(info["title"] + ".mp3"):
+                    try:
+                        os.rename(("website/static/downloads/" + file), f"website/static/downloads/{clean_filename(artist)} - {clean_filename(title)}.mp3")
+                    except FileNotFoundError:
+                        print(f"Error: The file '{file}' was not found.")
+                    except FileExistsError:
+                        print(f"Error: The destination file '{file}' already exists.")
+                    except Exception as e:
+                        print(f"An unexpected error occurred while renaming the file '{file}' : {e}")
+
+                    path = f"website/static/downloads/{clean_filename(artist)} - {clean_filename(title)}.mp3"
+                
+                    try:
+                        tags = ID3(path)
+                    except ID3NoHeaderError:
+                        tags = ID3()
+
+                    tags.setall("TIT2", [TIT2(encoding=3, text=title)])     # title
+                    tags.setall("TPE1", [TPE1(encoding=3, text=artist)])    # artist
+                    tags.setall("TPE2", [TPE2(encoding=3, text=artist)])    # album artist
+                    tags.setall("TALB", [TALB(encoding=3, text=album)])     # album
+
+                    tags.setall("TDRC", [TDRC(encoding=3, text=year)])             # year
+                    tags.setall("TRCK", [TRCK(encoding=3, text=track_number)])     # track number
+                    tags.setall("TCON", [TCON(encoding=3, text=genre)])            # genre
+
+                    # Cover art
+                    cover_url = cover
+                    cover_data = download_cover(cover_url)
+
+                    tags.delall("APIC")
+                    tags.add(
+                        APIC(
+                            encoding=3,
+                            mime="image/jpeg",
+                            type=3,
+                            desc="Cover",
+                            data=cover_data,
+                        )
+                    )
+
+                    tags.save(path, v2_version=3)
+
+                    return {
+                        "okay" : True,
+                        "file_path" : path
+                    }
     finally:
         download_lock.release()
-
-    with YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
-        info = ydl.extract_info(url, download=False)
-    
-        for file in os.listdir("website/static/downloads/"):
-            if file == clean_filename(info["title"] + ".mp3"):
-                try:
-                    os.rename(("website/static/downloads/" + file), f"website/static/downloads/{clean_filename(artist)} - {clean_filename(title)}.mp3")
-                except FileNotFoundError:
-                    print(f"Error: The file '{file}' was not found.")
-                except FileExistsError:
-                    print(f"Error: The destination file '{file}' already exists.")
-                except Exception as e:
-                    print(f"An unexpected error occurred while renaming the file '{file}' : {e}")
-
-                path = f"website/static/downloads/{clean_filename(artist)} - {clean_filename(title)}.mp3"
-            
-                try:
-                    tags = ID3(path)
-                except ID3NoHeaderError:
-                    tags = ID3()
-
-                tags.setall("TIT2", [TIT2(encoding=3, text=title)])     # title
-                tags.setall("TPE1", [TPE1(encoding=3, text=artist)])    # artist
-                tags.setall("TPE2", [TPE2(encoding=3, text=artist)])    # album artist
-                tags.setall("TALB", [TALB(encoding=3, text=album)])     # album
-
-                tags.setall("TDRC", [TDRC(encoding=3, text=year)])             # year
-                tags.setall("TRCK", [TRCK(encoding=3, text=track_number)])     # track number
-                tags.setall("TCON", [TCON(encoding=3, text=genre)])            # genre
-
-                # Cover art
-                cover_url = cover
-                cover_data = download_cover(cover_url)
-
-                tags.delall("APIC")
-                tags.add(
-                    APIC(
-                        encoding=3,
-                        mime="image/jpeg",
-                        type=3,
-                        desc="Cover",
-                        data=cover_data,
-                    )
-                )
-
-                tags.save(path, v2_version=3)
-
-                return {
-                    "status" : "success",
-                    "file_path" : path
-                }
 
 def download_mp3_blank(video_id):
     for file in os.listdir("website/static/downloads/"):

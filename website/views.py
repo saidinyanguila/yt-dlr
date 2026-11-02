@@ -88,15 +88,15 @@ def download():
 
     response = download_mp3(id, title, artist, album, cover, year, genre, track_number)
 
-    if response['status'] == "success" :
+    if response['ok']:
         return jsonify({
-            "status" : "success",
+            "ok" : True,
             "url" : f"{response['file_path']}"
         })
     else :
         return jsonify({
-            "status" : "failed",
-            "msg" : response['msg']
+            "ok" : False,
+            "msg" : response['error']
         })
 
 @views.route("/download-blank/", methods=['POST'])

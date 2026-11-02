@@ -110,6 +110,7 @@ results.forEach((res) => {
         }
 
         downloading = true;
+        download_status.querySelector(".status_text").innerHTML = "Downloading...";
         download_status.classList.remove("hidden"); 
         download_status.querySelector(".loading-bar").classList.remove("hidden");
 
@@ -133,29 +134,42 @@ results.forEach((res) => {
         })
         .then(res => res.json())
         .then(data => {
-            if (data.status == "success") {
+            downloading = false;  
+
+            if (data.ok) {
                 const link = document.createElement("a");
                 link.href = `${data.url}`.replace("website/", "");
                 link.download = `${title} - ${artist}.mp3`;
                 link.click();
+
+                download_status.querySelector(".status_text").innerHTML = "Done!";
+                download_status.querySelector(".loading-bar").classList.add("hidden");
+
+                setTimeout(() => {
+                    download_status.classList.replace("bottom-0", "-bottom-[100%]"); 
+                    
+                    setTimeout(() => {
+                        download_status.classList.add("hidden"); 
+                    }, 3500);   
+                }, 3500);  
             }
-            else alert("Something Went Wrong");
+            else {
+                alert(data.msg);
+                download_status.querySelector(".status_text").innerHTML = "Could Not Download";
+                download_status.querySelector(".loading-bar").classList.add("hidden");
+
+                setTimeout(() => {
+                    download_status.classList.replace("bottom-0", "-bottom-[100%]"); 
+                    
+                    setTimeout(() => {
+                        download_status.classList.add("hidden"); 
+                    }, 3500);   
+                }, 3500);  
+            }
         })
         .catch(e => {
-            element.innerHTML = "";
-            element.innerHTML = `
-                <div class="flex items-center">
-                    <div class="relative w-[60px] h-[60px] mr-3 aspect-square" >
-                        <img class="w-full h-full" src="/static/img/error.png" alt="" />
-                    </div>
-
-                    <p class="text-lg font-[400]">Error Downloading Song Info</p>
-                </div>
-            `;
-        })
-        .finally(() => {
             downloading = false;  
-            download_status.querySelector(".status_text").innerHTML = "Done!";
+            download_status.querySelector(".status_text").innerHTML = "Could Not Download";
             download_status.querySelector(".loading-bar").classList.add("hidden");
 
             setTimeout(() => {
@@ -164,7 +178,7 @@ results.forEach((res) => {
                 setTimeout(() => {
                     download_status.classList.add("hidden"); 
                 }, 3500);   
-            }, 3500);       
+            }, 5000);  
         })
     }
 
