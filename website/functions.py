@@ -118,7 +118,7 @@ def download_mp3(video_id, title, artist, album, cover, year, genre, track_numbe
                     tags.save(path, v2_version=3)
 
                     return {
-                        "okay" : True,
+                        "ok" : True,
                         "file_path" : path
                     }
     finally:
